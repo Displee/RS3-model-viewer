@@ -4,7 +4,7 @@ This project is open-source and will be contributed by other developers.
 
 ![alt text](https://i.imgur.com/OJhslY0.png)
 
-### Features
+## Features
 
 - [x] Model rendering
 - [ ] Texture rendering
@@ -13,5 +13,8 @@ This project is open-source and will be contributed by other developers.
 - [ ] Export to MQO format
 - [ ] Extra controls?
 
-### Credits
+## Special thanks to
+- LWJGL-FX https://github.com/Spasi/LWJGL-FX
+
+## Credits
 - Me (Displee)
