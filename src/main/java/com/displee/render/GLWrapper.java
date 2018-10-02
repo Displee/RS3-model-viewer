@@ -237,7 +237,6 @@ public abstract class GLWrapper<T> {
 				renderStream.swapBuffers();
 			}
 
-			//capped to 100 FPS
 			Display.sync(fpsLimit);
 
 			final long currentTime = System.nanoTime();
@@ -255,6 +254,7 @@ public abstract class GLWrapper<T> {
 		onTerminate();
 		renderStream.destroy();
 		pbuffer.destroy();
+		Display.destroy();
 		context = null;
 	}
 
