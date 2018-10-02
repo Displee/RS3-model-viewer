@@ -3,6 +3,7 @@
 # Intellij
 target
 .idea
+/native
 
 # Log file
 *.log
