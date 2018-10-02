@@ -11,6 +11,7 @@ This project is open-source and will be contributed by other developers.
 - [ ] Export to RS3 format
 - [ ] Export to RS2 format
 - [ ] Export to MQO format
+- [ ] Extra controls?
 
 ### Credits
 - Me (Displee)
