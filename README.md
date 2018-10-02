@@ -16,5 +16,8 @@ This project is open-source and will be contributed by other developers.
 ## Special thanks to
 - LWJGL-FX https://github.com/Spasi/LWJGL-FX
 
+## Contribution
+You may contribute to this repository by following the current code style.
+
 ## Credits
 - Me (Displee)
