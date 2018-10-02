@@ -12,5 +12,5 @@ This project is open-source and will be contributed by other developers.
 - [ ] Export to RS2 format
 - [ ] Export to MQO format
 
-Credits:
-Me
+### Credits:
+- Me (Displee)
