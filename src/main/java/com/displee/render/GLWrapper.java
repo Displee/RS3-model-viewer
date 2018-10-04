@@ -132,7 +132,7 @@ public abstract class GLWrapper<T> {
 		this.fps = new ReadOnlyIntegerWrapper(this, "fps", 0);
 		try {
 			//not sure if this pixel format is 100%
-			pbuffer = new Pbuffer(1, 1, new PixelFormat(8, 24, 8, 8), null, null, new ContextAttribs().withDebug(true));
+			pbuffer = new Pbuffer(1, 1, new PixelFormat(), null, null, new ContextAttribs().withDebug(true));
 			pbuffer.makeCurrent();
 		} catch (LWJGLException e) {
 			throw new RuntimeException(e);
@@ -179,7 +179,7 @@ public abstract class GLWrapper<T> {
 				mousePosX++;
 				break;
 			default:
-				System.out.println("Unhandled keycode=" + e.getCode());
+				System.err.println("Unhandled keycode=" + e.getCode());
 				break;
 			}
 			e.consume();
@@ -219,6 +219,13 @@ public abstract class GLWrapper<T> {
 	 * @param nodes The update nodes.
 	 */
 	public void run(Node... nodes) {
+		/*try {
+			Display.setDisplayMode(new DisplayMode(800, 600));
+			Display.create();
+		} catch(LWJGLException e) {
+			e.printStackTrace();
+		}*/
+
 		init();
 
 		long nextFPSUpdateTime = System.nanoTime() + FPS_UPD_INTERVAL;
@@ -236,6 +243,8 @@ public abstract class GLWrapper<T> {
 				render();
 				renderStream.swapBuffers();
 			}
+
+			//Display.update();
 
 			Display.sync(fpsLimit);
 

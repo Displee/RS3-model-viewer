@@ -10,6 +10,7 @@ import java.util.jar.JarFile;
 
 /**
  * A class containing utilities used throught the application.
+ *
  * @author Displee
  */
 public class Utilities {
@@ -17,55 +18,65 @@ public class Utilities {
 	private static final int[] HSL_2_RGB = new int[65536];
 
 	static {
-		double d = 0.7D;
-		int i = 0;
-		for (int i1 = 0; i1 != 512; ++i1) {
-			float f = ((i1 >> 3) / 64.0F + 0.0078125F) * 360.0F;
-			float f1 = 0.0625F + (0x7 & i1) / 8.0F;
-			for (int i2 = 0; i2 != 128; ++i2) {
-				float f2 = i2 / 128.0F;
-				float f3 = 0.0F;
-				float f4 = 0.0F;
-				float f5 = 0.0F;
-				float f6 = f / 60.0F;
-				int i3 = (int) f6;
-				int i4 = i3 % 6;
-				float f7 = f6 - i3;
-				float f8 = f2 * (-f1 + 1.0F);
-				float f9 = f2 * (-(f7 * f1) + 1.0F);
-				float f10 = (1.0F - f1 * (-f7 + 1.0F)) * f2;
-				if (i4 == 0) {
-					f3 = f2;
-					f5 = f8;
-					f4 = f10;
-				} else if (i4 == 1) {
-					f5 = f8;
-					f3 = f9;
-					f4 = f2;
-				} else if (i4 == 2) {
-					f3 = f8;
-					f4 = f2;
-					f5 = f10;
-				} else if (i4 == 3) {
-					f4 = f9;
-					f3 = f8;
-					f5 = f2;
-				} else if (i4 == 4) {
-					f5 = f2;
-					f3 = f10;
-					f4 = f8;
-				} else {
-					f4 = f8;
-					f5 = f9;
-					f3 = f2;
+		double var1 = 0.7D + (Math.random() * 0.03D - 0.015D);
+		int var3 = 0;
+
+		for (int var4 = 0; var4 < 512; ++var4) {
+			float var5 = (0.0078125F + (float) (var4 >> 3) / 64.0F) * 360.0F;
+			float var6 = 0.0625F + (float) (var4 & 7) / 8.0F;
+
+			for (int var7 = 0; var7 < 128; ++var7) {
+				float var8 = (float) var7 / 128.0F;
+				float var9 = 0.0F;
+				float var10 = 0.0F;
+				float var11 = 0.0F;
+				float var12 = var5 / 60.0F;
+				int var13 = (int) var12;
+				int var14 = var13 % 6;
+				float var15 = var12 - (float) var13;
+				float var16 = (1.0F - var6) * var8;
+				float var17 = var8 * (1.0F - var6 * var15);
+				float var18 = var8 * (1.0F - var6 * (1.0F - var15));
+				if (var14 == 0) {
+					var9 = var8;
+					var10 = var18;
+					var11 = var16;
+				} else if (var14 == 1) {
+					var9 = var17;
+					var10 = var8;
+					var11 = var16;
+				} else if (2 == var14) {
+					var9 = var16;
+					var10 = var8;
+					var11 = var18;
+				} else if (var14 == 3) {
+					var9 = var16;
+					var10 = var17;
+					var11 = var8;
+				} else if (4 == var14) {
+					var9 = var18;
+					var10 = var16;
+					var11 = var8;
+				} else if (5 == var14) {
+					var9 = var8;
+					var10 = var16;
+					var11 = var17;
 				}
-				HSL_2_RGB[i++] = ((int) ((float) Math.pow(f3, d) * 256.0F) << 16) | ((int) ((float) Math.pow(f4, d) * 256.0F) << 8) | (int) ((float) Math.pow(f5, d) * 256.0F);
+
+				var9 = (float) Math.pow((double) var9, var1);
+				var10 = (float) Math.pow((double) var10, var1);
+				var11 = (float) Math.pow((double) var11, var1);
+				int var19 = (int) (var9 * 256.0F);
+				int var20 = (int) (256.0F * var10);
+				int var21 = (int) (256.0F * var11);
+				int var22 = (var19 << 16) + -16777216 + (var20 << 8) + var21;
+				HSL_2_RGB[var3++] = var22;
 			}
 		}
 	}
 
 	public static int forHSBColor(int hsb) {
-		return HSL_2_RGB[hsb & 0xFFFF];
+		return HSL_2_RGB[hsb & 0xFFFF] & 16777215;
 	}
 
 }
