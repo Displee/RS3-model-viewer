@@ -58,18 +58,6 @@ public class TextureDefinition {
 		}
 	}
 
-	public ByteBuffer createTextureBuffer() {
-		ByteBuffer buffer = ByteBuffer.allocateDirect(pixels.length * 4);
-		for (int pixel : pixels) {
-			buffer.put((byte) ((pixel >> 16) & 0xFF));
-			buffer.put((byte) ((pixel >> 8) & 0xFF));
-			buffer.put((byte) (pixel & 0xFF));
-			buffer.put((byte) (pixel >> 24));
-		}
-		buffer.flip();
-		return buffer;
-	}
-
 	/*private int[] getPixelsMethod1(CacheLibrary library, Class595 var1, int var2, double var3) {
 		byte[] var5 = library.getIndex(43).getArchive(var2).getFile(0).getData();//this.method2672(var1, var2);
 		if (null == var5) {
@@ -125,18 +113,17 @@ public class TextureDefinition {
 	}*/
 
 	private int[] method2671(byte[] imageData, boolean var2) throws IOException {
-		BufferedImage var4 = ImageIO.read(new ByteArrayInputStream(imageData));
+		BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 		this.imageData = imageData;
-		this.image = var4;
-		if (var4 == null) {
+		this.image = image;
+		if (image == null) {
 			return null;
 		} else {
-			int[] var5 = method7796(var4);
+			int[] var5 = getRGB(image);
 			if (var2) {
-				for (int var6 = var4.getHeight() - 1; var6 >= 0; --var6) {
-					int var7 = var6 * var4.getWidth();
-
-					for (int var8 = (var6 + 1) * var4.getWidth(); var7 < var8; ++var7) {
+				for (int var6 = image.getHeight() - 1; var6 >= 0; --var6) {
+					int var7 = var6 * image.getWidth();
+					for (int var8 = (var6 + 1) * image.getWidth(); var7 < var8; ++var7) {
 						--var8;
 						int var9 = var5[var7];
 						var5[var7] = var5[var8];
@@ -148,7 +135,7 @@ public class TextureDefinition {
 		}
 	}
 
-	private static int[] method7796(BufferedImage bufferedimage) {
+	private static int[] getRGB(BufferedImage bufferedimage) {
 		if (bufferedimage.getType() == 10 || bufferedimage.getType() == 0) {
 			int[] is = null;
 			is = bufferedimage.getRaster().getPixels(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), is);
@@ -166,6 +153,22 @@ public class TextureDefinition {
 			return is_6_;
 		}
 		return bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), null, 0, bufferedimage.getWidth());
+	}
+
+	/**
+	 * Convert the pixels of this texture to a {@code ByteBuffer} {@code Object}.
+	 * @return The byte buffer.
+	 */
+	public ByteBuffer toByteBuffer() {
+		ByteBuffer buffer = ByteBuffer.allocateDirect(pixels.length * 4);
+		for (int pixel : pixels) {
+			buffer.put((byte) ((pixel >> 16) & 0xFF));
+			buffer.put((byte) ((pixel >> 8) & 0xFF));
+			buffer.put((byte) (pixel & 0xFF));
+			buffer.put((byte) (pixel >> 24));
+		}
+		buffer.flip();
+		return buffer;
 	}
 
 }

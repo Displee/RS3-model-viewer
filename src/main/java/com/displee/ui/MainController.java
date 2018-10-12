@@ -1,5 +1,6 @@
 package com.displee.ui;
 
+import com.displee.Constants;
 import com.displee.Main;
 import com.displee.cache.ModelDefinition;
 import com.displee.render.GLWrapper;
@@ -63,6 +64,12 @@ public class MainController implements Initializable {
 	@FXML
 	private ComboBox<Integer> fpsComboBox;
 
+	@FXML
+	private CheckBox showPolygons;
+
+	@FXML
+	private CheckBox enableTextures;
+
 	/**
 	 * The current cache.
 	 */
@@ -101,7 +108,7 @@ public class MainController implements Initializable {
 			}
 			try {
 				Files.write(file.toPath(), cacheLibrary.getIndex(7).getArchive(model.getId()).getFile(0).getData());
-			} catch(IOException ex) {
+			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
 		});
@@ -126,10 +133,16 @@ public class MainController implements Initializable {
 			}
 		});
 		fpsComboBox.getSelectionModel().select(0);
+		enableTextures.selectedProperty().addListener((ob, o, n) -> {
+			Constants.ENABLE_TEXTURES = n;
+		});
+		showPolygons.selectedProperty().addListener((ob, o, n) -> {
+			Constants.SHOW_POLYGONS = n;
+		});
 		new Thread(() -> {
 			renderer = new DefaultGLRenderer(imageView);
 			renderer.run(fpsLabel);
-		}, "GLThread").start();
+		}).start();
 		Main.stage.setOnCloseRequest(e -> {
 			if (renderer != null) {
 				renderer.terminate();

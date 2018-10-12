@@ -1,5 +1,6 @@
 package com.displee.render.impl;
 
+import com.displee.Constants;
 import com.displee.cache.ModelDefinition;
 import com.displee.cache.TextureDefinition;
 import com.displee.render.GLWrapper;
@@ -11,7 +12,7 @@ import javafx.scene.image.ImageView;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.displee.Constants.ENABLE_TEXTURE_RENDERING;
+import static com.displee.Constants.ENABLE_TEXTURES;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -26,7 +27,15 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 	 */
 	private static final float MODEL_SCALE = 4.0F;
 
-	private Map<Integer, Integer> tempTextureMap = new HashMap<>();
+	/**
+	 * Holding all used textures in this renderer.
+	 */
+	private Map<Integer, Integer> textureMap = new HashMap<>();
+
+	/**
+	 * If we have to show the polygons of a model.
+	 */
+	private boolean showPolygons = false;
 
 	/**
 	 * Constructs a new {@code DefaultGLRenderer} {@code Object}.
@@ -49,7 +58,6 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_ALPHA_TEST);
@@ -75,6 +83,11 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 
 	@Override
 	protected void render() {
+		if (showPolygons != Constants.SHOW_POLYGONS) {
+			showPolygons = Constants.SHOW_POLYGONS;
+			togglePolygons();
+		}
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		float width = (float) view.getFitWidth();
@@ -152,7 +165,7 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 			float[] u = null;
 			float[] v = null;
 			int color = Utilities.forHSBColor(model.getFaceColors()[i]);
-			if (ENABLE_TEXTURE_RENDERING && textureId != -1) {
+			if (ENABLE_TEXTURES && textureId != -1) {
 
 				glEnable(GL_TEXTURE_2D);
 
@@ -170,27 +183,27 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 			}
 			glBegin(GL_TRIANGLES);
 			glColor4ub((byte)(color >> 16), (byte) (color >> 8), (byte) color, (byte) alpha);
-			if (ENABLE_TEXTURE_RENDERING && textureId != -1) {
+			if (ENABLE_TEXTURES && textureId != -1) {
 				glTexCoord2f(u[0], v[0]);
 			}
 			glVertex3f(verticesX[faceA] / MODEL_SCALE, verticesY[faceA] / MODEL_SCALE, verticesZ[faceA] / MODEL_SCALE);
-			if (ENABLE_TEXTURE_RENDERING && textureId != -1) {
+			if (ENABLE_TEXTURES && textureId != -1) {
 				glTexCoord2f(u[1], v[1]);
 			}
 			glVertex3f(verticesX[faceB] / MODEL_SCALE, verticesY[faceB] / MODEL_SCALE, verticesZ[faceB] / MODEL_SCALE);
-			if (ENABLE_TEXTURE_RENDERING && textureId != -1) {
+			if (ENABLE_TEXTURES && textureId != -1) {
 				glTexCoord2f(u[2], v[2]);
 			}
 			glVertex3f(verticesX[faceC] / MODEL_SCALE, verticesY[faceC] / MODEL_SCALE, verticesZ[faceC] / MODEL_SCALE);
 			glEnd();
-			if (ENABLE_TEXTURE_RENDERING && textureId != -1) {
+			if (ENABLE_TEXTURES && textureId != -1) {
 				glDisable(GL_TEXTURE_2D);
 			}
 		}
 	}
 
 	private int getTexture(TextureDefinition textureDefinition) {
-		Integer openGlId = tempTextureMap.get(textureDefinition.getId());
+		Integer openGlId = textureMap.get(textureDefinition.getId());
 		if (openGlId != null) {
 			return openGlId;
 		}
@@ -209,13 +222,21 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureDefinition.createTextureBuffer());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureDefinition.toByteBuffer());
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Linear Filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Linear Filtering
 
-		tempTextureMap.put(textureDefinition.getId(), glTexture);
+		textureMap.put(textureDefinition.getId(), glTexture);
 		return glTexture;
+	}
+
+	private void togglePolygons() {
+		if (Constants.SHOW_POLYGONS) {
+			glEnable(GL_POLYGON_SMOOTH);
+		} else {
+			glDisable(GL_POLYGON_SMOOTH);
+		}
 	}
 
 }

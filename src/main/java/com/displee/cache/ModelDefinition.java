@@ -508,24 +508,23 @@ public class ModelDefinition {
 
 	/**
 	 * Decode the face indices.
-	 *
-	 * @param var1 The first stream.
-	 * @param var2 The second stream.
-	 * @param var3 The third stream.
+	 * @param first The first stream.
+	 * @param second The second stream.
+	 * @param third The third stream.
 	 */
-	private void decodeIndices(InputStream var1, InputStream var2, InputStream var3) {
+	private void decodeIndices(InputStream first, InputStream second, InputStream third) {
 		short var4 = 0;
 		short var5 = 0;
 		short var6 = 0;
 		short var7 = 0;
 
 		for (int var8 = 0; var8 < this.numFaces; ++var8) {
-			int var9 = var2.readUnsignedByte();
+			int var9 = second.readUnsignedByte();
 			int var10 = var9 & 7;
 			if (var10 == 1) {
-				this.faceIndicesA[var8] = var4 = (short) (var1.readUnsignedSmart() + var7);
-				this.faceIndicesB[var8] = var5 = (short) (var1.readUnsignedSmart() + var4);
-				this.faceIndicesC[var8] = var6 = (short) (var1.readUnsignedSmart() + var5);
+				this.faceIndicesA[var8] = var4 = (short) (first.readUnsignedSmart() + var7);
+				this.faceIndicesB[var8] = var5 = (short) (first.readUnsignedSmart() + var4);
+				this.faceIndicesC[var8] = var6 = (short) (first.readUnsignedSmart() + var5);
 				var7 = var6;
 				if (var4 > this.maxIndex) {
 					this.maxIndex = var4;
@@ -542,7 +541,7 @@ public class ModelDefinition {
 
 			if (var10 == 2) {
 				var5 = var6;
-				var6 = (short) (var1.readUnsignedSmart() + var7);
+				var6 = (short) (first.readUnsignedSmart() + var7);
 				var7 = var6;
 				this.faceIndicesA[var8] = var4;
 				this.faceIndicesB[var8] = var5;
@@ -554,7 +553,7 @@ public class ModelDefinition {
 
 			if (var10 == 3) {
 				var4 = var6;
-				var6 = (short) (var1.readUnsignedSmart() + var7);
+				var6 = (short) (first.readUnsignedSmart() + var7);
 				var7 = var6;
 				this.faceIndicesA[var8] = var4;
 				this.faceIndicesB[var8] = var5;
@@ -568,7 +567,7 @@ public class ModelDefinition {
 				short var11 = var4;
 				var4 = var5;
 				var5 = var11;
-				var6 = (short) (var1.readUnsignedSmart() + var7);
+				var6 = (short) (first.readUnsignedSmart() + var7);
 				var7 = var6;
 				this.faceIndicesA[var8] = var4;
 				this.faceIndicesB[var8] = var11;
@@ -579,9 +578,9 @@ public class ModelDefinition {
 			}
 
 			if (this.anInt1951 > 0 && (var9 & 8) != 0) {
-				this.aByteArray1933[var8] = (byte) var3.readUnsignedByte();
-				this.aByteArray1934[var8] = (byte) var3.readUnsignedByte();
-				this.aByteArray1952[var8] = (byte) var3.readUnsignedByte();
+				this.aByteArray1933[var8] = (byte) third.readUnsignedByte();
+				this.aByteArray1934[var8] = (byte) third.readUnsignedByte();
+				this.aByteArray1952[var8] = (byte) third.readUnsignedByte();
 			}
 		}
 

@@ -1,5 +1,6 @@
 package com.displee.render;
 
+import static com.displee.Constants.ANTI_ALIAS_SAMPLES;
 import static com.displee.Constants.USE_SWING_RENDERING;
 import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
 import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
@@ -29,7 +30,6 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
 
 /**
  * A class serving as a wrapper to render OpenGL in JavaFX.
@@ -147,12 +147,12 @@ public abstract class GLWrapper<T> {
 			glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
 		}
 		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
-		this.renderStream = renderStreamFactory.create(getReadHandler(), 1, 2);
-		view.setOnMousePressed((MouseEvent event) -> {
+		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
+		view.setOnMousePressed(event -> {
 			mousePosX = event.getSceneX();
 			mousePosY = event.getSceneY();
 		});
-		view.setOnMouseDragged((MouseEvent event) -> {
+		view.setOnMouseDragged(event -> {
 			mousePosX = event.getSceneX();
 			mousePosY = event.getSceneY();
 		});
