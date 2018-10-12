@@ -1,5 +1,6 @@
 package com.displee.render;
 
+import static com.displee.Constants.USE_SWING_RENDERING;
 import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
 import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
 import static org.lwjgl.opengl.KHRDebug.GL_DEBUG_SEVERITY_MEDIUM;
@@ -219,12 +220,14 @@ public abstract class GLWrapper<T> {
 	 * @param nodes The update nodes.
 	 */
 	public void run(Node... nodes) {
-		/*try {
-			Display.setDisplayMode(new DisplayMode(800, 600));
-			Display.create();
-		} catch(LWJGLException e) {
-			e.printStackTrace();
-		}*/
+		if (USE_SWING_RENDERING) {
+			try {
+				Display.setDisplayMode(new DisplayMode(800, 600));
+				Display.create();
+			} catch (LWJGLException e) {
+				e.printStackTrace();
+			}
+		}
 
 		init();
 
@@ -244,7 +247,9 @@ public abstract class GLWrapper<T> {
 				renderStream.swapBuffers();
 			}
 
-			//Display.update();
+			if (USE_SWING_RENDERING) {
+				Display.update();
+			}
 
 			Display.sync(fpsLimit);
 

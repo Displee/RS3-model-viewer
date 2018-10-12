@@ -113,7 +113,7 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 		short[] textureMappingP = model.getTextureMappingP();
 		short[] textureMappingM = model.getTextureMappingM();
 		short[] textureMappingN = model.getTextureMappingN();
-		short[] faceTextures = model.getFaceMaterials();
+		short[] faceTextures = model.getFaceTextures();
 		int[] verticesX = model.getVerticesX();
 		int[] verticesY = model.getVerticesY();
 		int[] verticesZ = model.getVerticesZ();
