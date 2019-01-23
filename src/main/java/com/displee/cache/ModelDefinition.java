@@ -483,15 +483,15 @@ public class ModelDefinition {
 			}
 		}
 
-		if (faceTextures == null) {
+		if (faceMaterials == null) {
 			return;
 		}
 
 		//custom
 		Map<Short, TextureDefinition> map = new HashMap<>();
-		textures = new TextureDefinition[faceTextures.length];
-		for (int i = 0; i < faceTextures.length; i++) {
-			short textureId = faceTextures[i];
+		textures = new TextureDefinition[faceMaterials.length];
+		for (int i = 0; i < faceMaterials.length; i++) {
+			short textureId = faceMaterials[i];
 			if (textureId == -1) {
 				continue;
 			}
