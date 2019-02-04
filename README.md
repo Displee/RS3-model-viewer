@@ -2,7 +2,7 @@
 This is an effort to create a RuneScape3 model viewer using JavaFX together with OpenGL.
 This project is open-source and will be contributed by other developers.
 
-![alt text](https://i.imgur.com/OJhslY0.png)
+![alt text](https://i.imgur.com/KalRzqn.png)
 
 ## Features
 
