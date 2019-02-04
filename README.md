@@ -7,7 +7,7 @@ This project is open-source and can be contributed by other developers.
 ## Features
 
 - [x] Model rendering
-- [ ] Texture rendering
+- [x] Texture rendering
 - [x] Export to RS3 format
 - [ ] Export to RS2 format
 - [ ] Export to MQO format
