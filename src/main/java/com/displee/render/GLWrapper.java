@@ -1,5 +1,7 @@
 package com.displee.render;
 
+import static com.displee.Constants.ANTI_ALIAS_SAMPLES;
+import static com.displee.Constants.USE_SWING_RENDERING;
 import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
 import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
 import static org.lwjgl.opengl.KHRDebug.GL_DEBUG_SEVERITY_MEDIUM;
@@ -10,6 +12,8 @@ import static org.lwjgl.opengl.KHRDebug.glDebugMessageCallback;
 import static org.lwjgl.opengl.KHRDebug.glDebugMessageControl;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -28,7 +32,6 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
 
 /**
  * A class serving as a wrapper to render OpenGL in JavaFX.
@@ -36,6 +39,11 @@ import javafx.scene.input.MouseEvent;
  * @author Displee
  */
 public abstract class GLWrapper<T> {
+
+	/**
+	 * A queue of runnables which will be executed on the OpenGL thread.
+	 */
+	private static final Queue<Runnable> QUEUE = new LinkedList<>();
 
 	/**
 	 * The zoom factor.
@@ -60,7 +68,7 @@ public abstract class GLWrapper<T> {
 	private final Pbuffer pbuffer;
 
 	/**
-	 * The render factory.
+	 * The render stream factory.
 	 */
 	private RenderStreamFactory renderStreamFactory;
 
@@ -132,7 +140,7 @@ public abstract class GLWrapper<T> {
 		this.fps = new ReadOnlyIntegerWrapper(this, "fps", 0);
 		try {
 			//not sure if this pixel format is 100%
-			pbuffer = new Pbuffer(1, 1, new PixelFormat(8, 24, 8, 8), null, null, new ContextAttribs().withDebug(true));
+			pbuffer = new Pbuffer(1, 1, new PixelFormat(), null, null, new ContextAttribs().withDebug(true));
 			pbuffer.makeCurrent();
 		} catch (LWJGLException e) {
 			throw new RuntimeException(e);
@@ -146,12 +154,12 @@ public abstract class GLWrapper<T> {
 			glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
 		}
 		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
-		this.renderStream = renderStreamFactory.create(getReadHandler(), 1, 2);
-		view.setOnMousePressed((MouseEvent event) -> {
+		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
+		view.setOnMousePressed(event -> {
 			mousePosX = event.getSceneX();
 			mousePosY = event.getSceneY();
 		});
-		view.setOnMouseDragged((MouseEvent event) -> {
+		view.setOnMouseDragged(event -> {
 			mousePosX = event.getSceneX();
 			mousePosY = event.getSceneY();
 		});
@@ -179,7 +187,7 @@ public abstract class GLWrapper<T> {
 				mousePosX++;
 				break;
 			default:
-				System.out.println("Unhandled keycode=" + e.getCode());
+				System.err.println("Unhandled keycode=" + e.getCode());
 				break;
 			}
 			e.consume();
@@ -219,6 +227,15 @@ public abstract class GLWrapper<T> {
 	 * @param nodes The update nodes.
 	 */
 	public void run(Node... nodes) {
+		if (USE_SWING_RENDERING) {
+			try {
+				Display.setDisplayMode(new DisplayMode(800, 600));
+				Display.create();
+			} catch (LWJGLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		init();
 
 		long nextFPSUpdateTime = System.nanoTime() + FPS_UPD_INTERVAL;
@@ -226,6 +243,10 @@ public abstract class GLWrapper<T> {
 		int frames = 0;
 
 		while (running) {
+			Runnable runnable;
+			while((runnable = QUEUE.poll()) != null) {
+				runnable.run();
+			}
 			if (lastWidth != view.getFitWidth() || lastHeight != view.getFitHeight()) {
 				onResize();
 				lastWidth = view.getFitWidth();
@@ -237,7 +258,10 @@ public abstract class GLWrapper<T> {
 				renderStream.swapBuffers();
 			}
 
-			//capped to 100 FPS
+			if (USE_SWING_RENDERING) {
+				Display.update();
+			}
+
 			Display.sync(fpsLimit);
 
 			final long currentTime = System.nanoTime();
@@ -255,6 +279,7 @@ public abstract class GLWrapper<T> {
 		onTerminate();
 		renderStream.destroy();
 		pbuffer.destroy();
+		Display.destroy();
 		context = null;
 	}
 
@@ -281,6 +306,15 @@ public abstract class GLWrapper<T> {
 	public void rotate(int x, int y) {
 		mousePosX = x;
 		mousePosY = y;
+	}
+
+	public void setRenderStreamFactory(RenderStreamFactory renderer) {
+		this.renderStreamFactory = renderer;
+		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
+	}
+
+	public static void runLater(Runnable runnable) {
+		QUEUE.add(runnable);
 	}
 
 	/**

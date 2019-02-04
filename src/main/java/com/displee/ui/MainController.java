@@ -1,5 +1,6 @@
 package com.displee.ui;
 
+import com.displee.Constants;
 import com.displee.Main;
 import com.displee.cache.ModelDefinition;
 import com.displee.render.GLWrapper;
@@ -17,11 +18,13 @@ import javafx.stage.FileChooser;
 import org.displee.CacheLibrary;
 import org.displee.CacheLibraryMode;
 import org.displee.progress.AbstractProgressListener;
+import org.lwjgl.util.stream.StreamUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -63,6 +66,15 @@ public class MainController implements Initializable {
 	@FXML
 	private ComboBox<Integer> fpsComboBox;
 
+	@FXML
+	private CheckBox showPolygons;
+
+	@FXML
+	private CheckBox enableTextures;
+
+	@FXML
+	private ComboBox<StreamUtil.RenderStreamFactory> renderOptions;
+
 	/**
 	 * The current cache.
 	 */
@@ -101,7 +113,7 @@ public class MainController implements Initializable {
 			}
 			try {
 				Files.write(file.toPath(), cacheLibrary.getIndex(7).getArchive(model.getId()).getFile(0).getData());
-			} catch(IOException ex) {
+			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
 		});
@@ -126,10 +138,25 @@ public class MainController implements Initializable {
 			}
 		});
 		fpsComboBox.getSelectionModel().select(0);
+		enableTextures.selectedProperty().addListener((ob, o, n) -> {
+			Constants.ENABLE_TEXTURES = n;
+		});
+		showPolygons.selectedProperty().addListener((ob, o, n) -> {
+			Constants.SHOW_POLYGONS = n;
+		});
+		renderOptions.valueProperty().addListener((obv, oldV, newV) -> {
+			GLWrapper.runLater(() -> {
+				renderer.setRenderStreamFactory(newV);
+			});
+		});
 		new Thread(() -> {
 			renderer = new DefaultGLRenderer(imageView);
+			renderOptions.getItems().addAll(StreamUtil.getRenderStreamImplementations());
+			Platform.runLater(() -> {
+				renderOptions.getSelectionModel().select(0);
+			});
 			renderer.run(fpsLabel);
-		}, "GLThread").start();
+		}).start();
 		Main.stage.setOnCloseRequest(e -> {
 			if (renderer != null) {
 				renderer.terminate();

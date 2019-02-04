@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -138,15 +139,15 @@
          <center>
             <GridPane BorderPane.alignment="CENTER">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="62.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="163.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="107.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="118.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="121.0" minHeight="0.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="240.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="318.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="328.0" minHeight="10.0" prefHeight="321.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -155,7 +156,13 @@
               </rowConstraints>
                <children>
                   <Label text="FPS limit" />
-                  <ComboBox fx:id="fpsComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="fpsComboBox" prefHeight="31.0" prefWidth="108.0" GridPane.columnIndex="1" />
+                  <Label prefHeight="46.0" prefWidth="112.0" text="Show polygons" GridPane.rowIndex="1" />
+                  <CheckBox fx:id="showPolygons" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label prefHeight="46.0" prefWidth="112.0" text="Enable textures" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="enableTextures" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Render mode" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="renderOptions" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
          </center>
