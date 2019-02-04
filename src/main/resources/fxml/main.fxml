@@ -146,8 +146,8 @@
                 <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="121.0" minHeight="0.0" prefHeight="29.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="240.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="318.0" minHeight="10.0" prefHeight="318.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="318.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="328.0" minHeight="10.0" prefHeight="321.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -161,6 +161,8 @@
                   <CheckBox fx:id="showPolygons" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label prefHeight="46.0" prefWidth="112.0" text="Enable textures" GridPane.rowIndex="2" />
                   <CheckBox fx:id="enableTextures" mnemonicParsing="false" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Render mode" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="renderOptions" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
          </center>

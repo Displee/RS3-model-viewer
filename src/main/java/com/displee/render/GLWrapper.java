@@ -12,6 +12,8 @@ import static org.lwjgl.opengl.KHRDebug.glDebugMessageCallback;
 import static org.lwjgl.opengl.KHRDebug.glDebugMessageControl;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -39,6 +41,11 @@ import javafx.scene.image.WritableImage;
 public abstract class GLWrapper<T> {
 
 	/**
+	 * A queue of runnables which will be executed on the OpenGL thread.
+	 */
+	private static final Queue<Runnable> QUEUE = new LinkedList<>();
+
+	/**
 	 * The zoom factor.
 	 */
 	private static final float ZOOM_FACTOR = 0.2F;
@@ -61,7 +68,7 @@ public abstract class GLWrapper<T> {
 	private final Pbuffer pbuffer;
 
 	/**
-	 * The render factory.
+	 * The render stream factory.
 	 */
 	private RenderStreamFactory renderStreamFactory;
 
@@ -236,6 +243,10 @@ public abstract class GLWrapper<T> {
 		int frames = 0;
 
 		while (running) {
+			Runnable runnable;
+			while((runnable = QUEUE.poll()) != null) {
+				runnable.run();
+			}
 			if (lastWidth != view.getFitWidth() || lastHeight != view.getFitHeight()) {
 				onResize();
 				lastWidth = view.getFitWidth();
@@ -295,6 +306,15 @@ public abstract class GLWrapper<T> {
 	public void rotate(int x, int y) {
 		mousePosX = x;
 		mousePosY = y;
+	}
+
+	public void setRenderStreamFactory(RenderStreamFactory renderer) {
+		this.renderStreamFactory = renderer;
+		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
+	}
+
+	public static void runLater(Runnable runnable) {
+		QUEUE.add(runnable);
 	}
 
 	/**

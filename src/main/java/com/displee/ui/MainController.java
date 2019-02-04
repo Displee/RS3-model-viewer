@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import org.displee.CacheLibrary;
 import org.displee.CacheLibraryMode;
 import org.displee.progress.AbstractProgressListener;
+import org.lwjgl.util.stream.StreamUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +71,9 @@ public class MainController implements Initializable {
 
 	@FXML
 	private CheckBox enableTextures;
+
+	@FXML
+	private ComboBox<StreamUtil.RenderStreamFactory> renderOptions;
 
 	/**
 	 * The current cache.
@@ -140,8 +144,17 @@ public class MainController implements Initializable {
 		showPolygons.selectedProperty().addListener((ob, o, n) -> {
 			Constants.SHOW_POLYGONS = n;
 		});
+		renderOptions.valueProperty().addListener((obv, oldV, newV) -> {
+			GLWrapper.runLater(() -> {
+				renderer.setRenderStreamFactory(newV);
+			});
+		});
 		new Thread(() -> {
 			renderer = new DefaultGLRenderer(imageView);
+			renderOptions.getItems().addAll(StreamUtil.getRenderStreamImplementations());
+			Platform.runLater(() -> {
+				renderOptions.getSelectionModel().select(0);
+			});
 			renderer.run(fpsLabel);
 		}).start();
 		Main.stage.setOnCloseRequest(e -> {
