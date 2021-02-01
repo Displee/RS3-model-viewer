@@ -32,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 
 /**
  * A class serving as a wrapper to render OpenGL in JavaFX.
@@ -48,7 +49,7 @@ public abstract class GLWrapper<T> {
 	/**
 	 * The zoom factor.
 	 */
-	private static final float ZOOM_FACTOR = 0.2F;
+	private static final float ZOOM_FACTOR = 0.1F;
 
 	/**
 	 * The interval used to calculate the FPS.
@@ -104,14 +105,54 @@ public abstract class GLWrapper<T> {
 	private boolean running = true;
 
 	/**
-	 * The horizontal mouse position.
+	 * The horizontal rotation.
 	 */
-	protected double mousePosX;
+	protected double rotX;
 
 	/**
-	 * The vertical mouse position.
+	 * The vertical rotation.
 	 */
-	protected double mousePosY;
+	protected double rotY;
+	
+	/**
+	 * The horizontal panning.
+	 */
+	protected double panX;
+
+	/**
+	 * The vertical panning.
+	 */
+	protected double panY;
+
+	/**
+	 * The initial horizontal position for dragging.
+	 */
+	protected double initialX;
+
+	/**
+	 * The initial vertical position for dragging.
+	 */
+	protected double initialY;
+
+	/**
+	 * The old horizontal rotation value.
+	 */
+	protected double oldRotX=0;
+
+	/**
+	 * The old vertical rotation value.
+	 */
+	protected double oldRotY=0;
+
+	/**
+	 * The old horizontal panning value.
+	 */
+	protected double oldPanX=0;
+
+	/**
+	 * The old vertical panning value.
+	 */
+	protected double oldPanY=0;
 
 	/**
 	 * The scale.
@@ -156,12 +197,23 @@ public abstract class GLWrapper<T> {
 		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
 		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
 		view.setOnMousePressed(event -> {
-			mousePosX = event.getSceneX();
-			mousePosY = event.getSceneY();
+				initialX = event.getSceneX();
+				initialY = event.getSceneY();
 		});
 		view.setOnMouseDragged(event -> {
-			mousePosX = event.getSceneX();
-			mousePosY = event.getSceneY();
+			if (event.getButton() == MouseButton.PRIMARY) {
+				rotX = event.getSceneX() - initialX + oldRotX;
+				rotY = -(event.getSceneY() - initialY) + oldRotY;
+			} else if (event.getButton() == MouseButton.SECONDARY) {
+				panX = event.getSceneX() - initialX + oldPanX;
+				panY = event.getSceneY() - initialY + oldPanY;
+			}
+		});
+		view.setOnMouseReleased(event -> {
+			oldRotX = rotX;
+			oldRotY = rotY;
+			oldPanX = panX;
+			oldPanY = panY;
 		});
 		view.setOnScroll(e -> {
 			final double delta = e.getDeltaY();
@@ -175,16 +227,16 @@ public abstract class GLWrapper<T> {
 		view.setOnKeyTyped((e) -> {
 			switch (e.getCode()) {
 			case UP:
-				mousePosY--;
+				rotY--;
 				break;
 			case RIGHT:
-				mousePosX--;
+				rotX--;
 				break;
 			case DOWN:
-				mousePosY++;
+				rotY++;
 				break;
 			case LEFT:
-				mousePosX++;
+				rotX++;
 				break;
 			default:
 				System.err.println("Unhandled keycode=" + e.getCode());
@@ -304,8 +356,8 @@ public abstract class GLWrapper<T> {
 	 * @param y The vertical rotation.
 	 */
 	public void rotate(int x, int y) {
-		mousePosX = x;
-		mousePosY = y;
+		rotX = x;
+		rotY = y;
 	}
 
 	public void setRenderStreamFactory(RenderStreamFactory renderer) {
