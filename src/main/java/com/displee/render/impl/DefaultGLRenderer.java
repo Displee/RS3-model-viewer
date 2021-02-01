@@ -96,7 +96,7 @@ public class DefaultGLRenderer extends GLWrapper<ModelDefinition> {
 		float roll = 0.0F;
 		float scale = super.scale;
 
-		render(context, width / 2.0F + (float) panX, height / 2.0F + (float) panY, 0.0F, (float) mousePosY, (float) mousePosX, roll, scale, scale, scale);
+		render(context, width / 2.0F + (float) panX, height / 2.0F + (float) panY, 0.0F, (float) rotY, (float) rotX, roll, scale, scale, scale);
 	}
 
 	@Override

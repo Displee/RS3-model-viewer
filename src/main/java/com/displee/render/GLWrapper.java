@@ -105,22 +105,53 @@ public abstract class GLWrapper<T> {
 	private boolean running = true;
 
 	/**
-	 * The horizontal mouse position.
+	 * The horizontal rotation.
 	 */
-	protected double mousePosX;
+	protected double rotX;
 
 	/**
-	 * The vertical mouse position.
+	 * The vertical rotation.
 	 */
-	protected double mousePosY;
+	protected double rotY;
 	
+	/**
+	 * The horizontal panning.
+	 */
 	protected double panX;
+
+	/**
+	 * The vertical panning.
+	 */
 	protected double panY;
+
+	/**
+	 * The initial horizontal position for dragging.
+	 */
 	protected double initialX;
+
+	/**
+	 * The initial vertical position for dragging.
+	 */
 	protected double initialY;
-	protected double oldX=0;
-	protected double oldY=0;
+
+	/**
+	 * The old horizontal rotation value.
+	 */
+	protected double oldRotX=0;
+
+	/**
+	 * The old vertical rotation value.
+	 */
+	protected double oldRotY=0;
+
+	/**
+	 * The old horizontal panning value.
+	 */
 	protected double oldPanX=0;
+
+	/**
+	 * The old vertical panning value.
+	 */
 	protected double oldPanY=0;
 
 	/**
@@ -171,16 +202,16 @@ public abstract class GLWrapper<T> {
 		});
 		view.setOnMouseDragged(event -> {
 			if (event.getButton() == MouseButton.PRIMARY) {
-				mousePosX = event.getSceneX() - initialX + oldX;
-				mousePosY = -(event.getSceneY() - initialY) + oldY;
+				rotX = event.getSceneX() - initialX + oldRotX;
+				rotY = -(event.getSceneY() - initialY) + oldRotY;
 			} else if (event.getButton() == MouseButton.SECONDARY) {
 				panX = event.getSceneX() - initialX + oldPanX;
 				panY = event.getSceneY() - initialY + oldPanY;
 			}
 		});
 		view.setOnMouseReleased(event -> {
-			oldX = mousePosX;
-			oldY = mousePosY;
+			oldRotX = rotX;
+			oldRotY = rotY;
 			oldPanX = panX;
 			oldPanY = panY;
 		});
@@ -196,16 +227,16 @@ public abstract class GLWrapper<T> {
 		view.setOnKeyTyped((e) -> {
 			switch (e.getCode()) {
 			case UP:
-				mousePosY--;
+				rotY--;
 				break;
 			case RIGHT:
-				mousePosX--;
+				rotX--;
 				break;
 			case DOWN:
-				mousePosY++;
+				rotY++;
 				break;
 			case LEFT:
-				mousePosX++;
+				rotX++;
 				break;
 			default:
 				System.err.println("Unhandled keycode=" + e.getCode());
@@ -325,8 +356,8 @@ public abstract class GLWrapper<T> {
 	 * @param y The vertical rotation.
 	 */
 	public void rotate(int x, int y) {
-		mousePosX = x;
-		mousePosY = y;
+		rotX = x;
+		rotY = y;
 	}
 
 	public void setRenderStreamFactory(RenderStreamFactory renderer) {
