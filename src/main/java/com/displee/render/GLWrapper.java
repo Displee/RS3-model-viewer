@@ -32,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 
 /**
  * A class serving as a wrapper to render OpenGL in JavaFX.
@@ -48,7 +49,7 @@ public abstract class GLWrapper<T> {
 	/**
 	 * The zoom factor.
 	 */
-	private static final float ZOOM_FACTOR = 0.2F;
+	private static final float ZOOM_FACTOR = 0.1F;
 
 	/**
 	 * The interval used to calculate the FPS.
@@ -112,6 +113,15 @@ public abstract class GLWrapper<T> {
 	 * The vertical mouse position.
 	 */
 	protected double mousePosY;
+	
+	protected double panX;
+	protected double panY;
+	protected double initialX;
+	protected double initialY;
+	protected double oldX=0;
+	protected double oldY=0;
+	protected double oldPanX=0;
+	protected double oldPanY=0;
 
 	/**
 	 * The scale.
@@ -156,12 +166,23 @@ public abstract class GLWrapper<T> {
 		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
 		this.renderStream = renderStreamFactory.create(getReadHandler(), ANTI_ALIAS_SAMPLES, 2);
 		view.setOnMousePressed(event -> {
-			mousePosX = event.getSceneX();
-			mousePosY = event.getSceneY();
+				initialX = event.getSceneX();
+				initialY = event.getSceneY();
 		});
 		view.setOnMouseDragged(event -> {
-			mousePosX = event.getSceneX();
-			mousePosY = event.getSceneY();
+			if (event.getButton() == MouseButton.PRIMARY) {
+				mousePosX = event.getSceneX() - initialX + oldX;
+				mousePosY = -(event.getSceneY() - initialY) + oldY;
+			} else if (event.getButton() == MouseButton.SECONDARY) {
+				panX = event.getSceneX() - initialX + oldPanX;
+				panY = event.getSceneY() - initialY + oldPanY;
+			}
+		});
+		view.setOnMouseReleased(event -> {
+			oldX = mousePosX;
+			oldY = mousePosY;
+			oldPanX = panX;
+			oldPanY = panY;
 		});
 		view.setOnScroll(e -> {
 			final double delta = e.getDeltaY();
